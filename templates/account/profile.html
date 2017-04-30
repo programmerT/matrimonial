@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %} Profile {% endblock title %}
+
+{% block body %}
+  {% if request.user.is_authenticated %}
+      <div class="segment user-header">
+        <div class="information">
+          <section class="ui inverted header">
+            <h1 class="text-center center aligned" style="color: grey; font-size: 3em; text-align:center; margin: 0.5em;">Hi! {{user}}</h1>
+          </section>
+        </div>
+      </div>
+      <div class="ui items profile">
+        <div class="item">
+          <a class="ui tiny image">
+            <img src="{{ image }}" alt="profile" class="responsive circular">
+          </a>
+          <div class="content">
+            <!-- <a class="header">
+              {{user}}
+            </a> -->
+            <div class="description">
+              {% if user.first_name %}
+                <p><span class="user-label">First Name:</span> <span class="user-data">{{user.first_name}}</span></p>
+              {% endif %}
+              {% if user.last_name %}
+                <p><span class="user-label">Last Name:</span> <span class="user-data">{{user.last_name}}</span></p>
+              {% endif %}
+              {% if user.email %}
+                <p><span class="user-label">Contact:</span> <span class="user-data">{{user.email}}</span></p>
+              {% endif %}
+              {% if user.profile.location %}
+              <p><span class="user-label">location:</span> <span class="user-data">{{user.profile.location}}</span></p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="edit-btn">
+        <a href="{% url 'update-profile' %}" class="ui button small">Edit your Profile</a>
+      </div>
+  {% endif %}
+{% endblock %}

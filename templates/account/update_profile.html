@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block body %}
+  <form method="post" action="{% url 'update-profile' %}" class="ui form">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="field {% if field.errors%}error{% endif %}">
+        <label>{{ field.label }}</label>
+        {{ field }}
+      </div>
+    {% endfor %}
+    <!-- {{ form.as_p }} -->
+    <button class="ui button btn connyct-btn">Update</button>
+  </form>
+{% endblock %}

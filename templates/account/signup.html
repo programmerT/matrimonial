@@ -1,0 +1,37 @@
+{% extends "account/base.html" %}
+
+{% load staticfiles account socialaccount i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<div class="signupmodal-container">
+	<h1>Let's set up your account, while we find Matches for you!</h1><br>
+  <form action="{% url 'account_signup' %}" method="POST">
+    {% csrf_token %}
+    <!-- <label for="username">Create a username</label>
+	  <input type="text" id="username" name="username" class="form-control">
+    <label for="email">Ener your email id</label>
+    <input type="email" id="email" name="email" class="form-control">
+    <label for="username">Create a password</label>
+	  <input type="password" id="password" name="password1" class="form-control">
+    <label for="profile">Create profile for</label>
+    <select name="create_profile_for" class="form-control">
+      <option value="0">Self</option>
+      <option value="1">Son</option>
+      <option value="2">Daughter</option>
+      <option value="3">Relatives</option>
+    </select><br/> -->
+    {{form.as_p}}
+	  <input type="submit" name="login" class="signup signupmodal-submit" value="Signup">
+  </form>
+  <div class="signup-help">
+		<p>{% blocktrans %}Already a member? <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+  </div>
+</div>
+{% endblock content %}
+
+<!-- <div class="modal fade" id="signup-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+  </div>
+</div> -->
