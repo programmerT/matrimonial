@@ -22,7 +22,7 @@ from matrimonial import error
 
 
 from django.http import HttpResponse, JsonResponse
-from .serializers import UserSerializer, ProfileSerializer
+from .serializers import UserDetailSerializer, ProfileSerializer
 
 from rest_framework import status, permissions
 from rest_framework.response import Response
@@ -38,46 +38,50 @@ class UserList(APIView):
         reply={}
         try:
             users = User.objects.all()
-            reply['data'] = UserSerializer(users, many=True).data
+            reply['data'] = UserDetailSerializer(users, many=True).data
         except:
             reply['data']=[]
         return Response(reply, status.HTTP_200_OK)
 
 
 class UserProfile(APIView):
-    serializer_class = ProfileSerializer
+    serializer_class = UserDetailSerializer
     def get(self, request, token=None, format=None):
         """
         Returns a list of profile of user
         """
         reply={}
+        print('request', request.user)
         try:
-            profile_instance = Profile.objects.filter(user=self.request.user)
+            # user_instance = User.objects.filter(user=request.user)
             if token:
-                profile = profile_instance.get(token=token)
-                reply['data'] = self.serializer_class(profile).data
+                user = User.objects.get(id=token)
+                reply['data'] = self.serializer_class(user).data
             else:
-                reply['data'] = self.serializer_class(profile_instance, many=True).data
+                reply['data'] = self.serializer_class(user_instance, many=True).data
+        except User.DoesNotExist:
+            return error.RequestedResourceNotFound().as_response()
         except:
-            reply['data']=[]
+            return error.UnknownError().as_response()
+        # except:
+        #     reply['data']=[]
         return Response(reply, status.HTTP_200_OK)
 
     def put(self, request, token=None, *args, **kwargs):
         """
         update a profile
         """
-        print('token', token)
-        print('request data', request.data)
         if token:
             try:
-                profile = Profile.objects.get(token=token)
+                user = User.objects.get(id=token)
             except:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-        serialized_data = self.serializer_class(profile, data=request.data, partial=True)
+        serialized_data = self.serializer_class(instance=user, data=request.data, partial=True)
         reply={}
         if serialized_data.is_valid():
-            profile = serialized_data.save(user=request.user)
-            reply['data'] = self.serializer_class(profile, many=False).data
+            # print('valid', serialized_data)
+            user = serialized_data.save()
+            reply['data'] = self.serializer_class(instance=user, many=False).data
             return Response(reply, status.HTTP_200_OK)
         else:
             return Response(serialized_data.errors, status.HTTP_400_BAD_REQUEST)
@@ -120,3 +124,31 @@ class BasicProfileUpdateView(LoginRequiredMixin, UpdateView):
         print('request', self.request.user.id)
         # Only get the User record for the user making the request
         return Profile.objects.get(user=self.request.user.id)
+
+
+# class LoginView(views.APIView):
+#     def post(self, request, format=None):
+#         data = json.loads(request.body)
+#
+#         email = data.get('email', None)
+#         password = data.get('password', None)
+#
+#         account = authenticate(email=email, password=password)
+#
+#         if account is not None:
+#             if account.is_active:
+#                 login(request, account)
+#
+#                 serialized = UserDetailSerializer(account)
+#
+#                 return Response(serialized.data)
+#             else:
+#                 return Response({
+#                     'status': 'Unauthorized',
+#                     'message': 'This account has been disabled.'
+#                 }, status=status.HTTP_401_UNAUTHORIZED)
+#         else:
+#             return Response({
+#                 'status': 'Unauthorized',
+#                 'message': 'Username/password combination invalid.'
+#             }, status=status.HTTP_401_UNAUTHORIZED)

@@ -14,13 +14,13 @@ urlpatterns = [
         views.UserList.as_view(),
         name="user_list"
     ),
+    # url(
+    #     r'^users/(?P<token>[0-9a-z]+)$',
+    #     views.UserList.as_view(),
+    #     name="user_profile"
+    # ),
     url(
-        r'^users/(?P<token>[0-9a-z]+)$',
-        views.UserList.as_view(),
-        name="user_profile"
-    ),
-    url(
-        r'^user/profile/(?P<token>[0-9a-z]+)$',
+        r'^user/profile/(?P<token>[0-9a-z]+)?$',
         views.UserProfile.as_view(),
         name="user_profile"
     )

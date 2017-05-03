@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 MATRIMONIAL_APPS = [
     'pages',
     'user_settings',
+    'questions',
     'stories',
 ]
 
